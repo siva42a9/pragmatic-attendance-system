@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attendance Dashboard</title>
+
+<link rel="stylesheet" href="style.css"> 
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <img src="../frontend/assets/icons/logo.png" class="logo">
+
+        <h1>Pragmatic Industrial Automation Solutions</h1>
+
+        <p>Employee Attendance Dashboard</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Select Work Location</h2>
+
+        <div class="radio-group">
+
+            <label>
+
+                <input type="radio"
+                name="locationType"
+                value="Office"
+                checked>
+
+                Office
+
+            </label>
+
+         <label>
+            <input type="radio" name="locationType" value="Site">
+            <span class="site-text">Site</span>
+        </label>
+
+        </div>
+
+        <div id="siteBox" style="display:none;">
+
+            <input
+            type="text"
+            id="siteName"
+            placeholder="Enter Site Name">
+
+        </div>
+
+        <div class="btn-group">
+
+            <button id="checkinBtn">
+
+                🟢 Check IN
+
+            </button>
+
+            <button id="checkoutBtn">
+
+                🔴 Check OUT
+
+            </button>
+
+        </div>
+
+        <div id="msg"></div>
+
+    </div>
+
+    <div id="cameraSection" class="camera-card" style="display:none;">
+
+        <h2>Capture Selfie</h2>
+
+        <video
+        id="video"
+        width="320"
+        height="240"
+        autoplay
+        playsinline>
+        </video>
+
+        <br><br>
+
+        <button id="captureBtn">
+
+            📸 Capture Selfie
+
+        </button>
+
+        <canvas
+        id="canvas"
+        width="320"
+        height="240"
+        style="display:none;">
+        </canvas>
+
+    </div>
+
+</div>
+
+<script src="dashboard.js"></script>
+
+</body>
+</html>
