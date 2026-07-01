@@ -385,7 +385,17 @@ captureBtn.addEventListener("click", async () => {
 
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    attendanceData.selfie_url = canvas.toDataURL("image/jpeg", 0.8);
+    const image = canvas.toDataURL("image/jpeg", 0.8);
+
+if (attendanceData.action === "CHECKIN") {
+
+    attendanceData.checkin_selfie_url = image;
+
+} else {
+
+    attendanceData.checkout_selfie_url = image;
+
+}
 
     if (stream) {
 
