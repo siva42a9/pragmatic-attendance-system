@@ -334,25 +334,19 @@ async function saveCheckout() {
 
     try {
 
-        const response = await fetch(
+        const response = await fetch("/api/checkout", {
 
-            fetch("/api/checkout"),
+            method: "POST",
 
-            {
+            headers: {
 
-                method: "POST",
+                "Content-Type": "application/json"
 
-                headers: {
+            },
 
-                    "Content-Type": "application/json"
+            body: JSON.stringify(attendanceData)
 
-                },
-
-                body: JSON.stringify(attendanceData)
-
-            }
-
-            );
+        });
 
         const data = await response.json();
 
@@ -363,17 +357,13 @@ async function saveCheckout() {
             msg.innerHTML +=
                 "<br><br><b style='color:red;'>Check-Out Saved Successfully</b>";
 
-        }
-
-        else {
+        } else {
 
             alert(data.error || "Check-Out Failed");
 
         }
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.error(err);
 
@@ -382,6 +372,8 @@ async function saveCheckout() {
     }
 
 }
+
+
 
 // ======================================
 // CAPTURE SELFIE
