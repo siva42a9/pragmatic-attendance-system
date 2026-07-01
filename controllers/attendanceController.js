@@ -14,7 +14,7 @@ const checkIn = async (req, res) => {
         accuracy,
         location_type,
         site_name,
-        selfie_url
+        checkin_selfie_url
     } = req.body;
 
     try {
@@ -109,7 +109,7 @@ await pool.query(
         accuracy,
         location_type,
         site_name,
-        selfie_url,
+        checkin_selfie_url,
         status
     )
     VALUES
@@ -207,7 +207,7 @@ const checkOut = async (req, res) => {
 
         }
 
-        let savedImagePath = attendance.rows[0].selfie_url;
+        let savedImagePath = null;
 
         if (selfie_url) {
 
@@ -261,7 +261,7 @@ const checkOut = async (req, res) => {
 
              site_name=$5,
 
-             selfie_url=$6
+             checkout_selfie_url=$6
 
              WHERE employee_id=$7
 
