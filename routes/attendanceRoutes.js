@@ -7,7 +7,6 @@ const {
 } = require("../controllers/attendanceController");
 
 router.post("/checkin", checkIn);
-
 router.post("/checkout", checkOut);
 
 module.exports = router;

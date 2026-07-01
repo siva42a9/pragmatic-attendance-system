@@ -1,3 +1,11 @@
+const pool = require("../config/db");
+const supabase = require("../config/supabase");
+const crypto = require("crypto");
+
+// ======================================
+// CHECK IN
+// ======================================
+
 const checkIn = async (req, res) => {
 
     console.log("===== CHECK IN API CALLED =====");
@@ -15,21 +23,15 @@ const checkIn = async (req, res) => {
     try {
 
         const employee = await pool.query(
-
             "SELECT full_name FROM employees WHERE employee_id = $1",
-
             [employee_id]
-
         );
 
         if (employee.rows.length === 0) {
 
             return res.status(404).json({
-
                 success: false,
-
                 error: "Employee Not Found"
-
             });
 
         }
@@ -37,6 +39,23 @@ const checkIn = async (req, res) => {
         const employee_name = employee.rows[0].full_name;
 
         console.log("Employee:", employee_name);
+
+        // Already checked in?
+        const alreadyChecked = await pool.query(
+            `SELECT * FROM attendance
+             WHERE employee_id = $1
+             AND attendance_date = CURRENT_DATE`,
+            [employee_id]
+        );
+
+        if (alreadyChecked.rows.length > 0) {
+
+            return res.json({
+                success: false,
+                error: "You have already checked in today."
+            });
+
+        }
 
         let savedImagePath = null;
 
@@ -47,27 +66,19 @@ const checkIn = async (req, res) => {
         if (checkin_selfie_url) {
 
             const base64Data = checkin_selfie_url.replace(
-
                 /^data:image\/\w+;base64,/,
-
                 ""
-
             );
 
             const buffer = Buffer.from(base64Data, "base64");
 
             const fileName =
-
                 `${employee_id}_IN_${crypto.randomUUID()}.jpg`;
 
             const { error } = await supabase.storage
-
                 .from("selfies")
-
                 .upload(fileName, buffer, {
-
                     contentType: "image/jpeg"
-
                 });
 
             if (error) {
@@ -77,45 +88,12 @@ const checkIn = async (req, res) => {
             }
 
             const { data } = supabase.storage
-
                 .from("selfies")
-
                 .getPublicUrl(fileName);
 
             savedImagePath = data.publicUrl;
 
         }
-
-        // ===============================
-        // Already Checked-In?
-        // ===============================
-
-        const alreadyChecked = await pool.query(
-
-            `SELECT *
-             FROM attendance
-             WHERE employee_id=$1
-             AND attendance_date=CURRENT_DATE`,
-
-            [employee_id]
-
-        );
-
-        if (alreadyChecked.rows.length > 0) {
-
-            return res.json({
-
-                success: false,
-
-                error: "You have already checked in today."
-
-            });
-
-        }
-
-        // ===============================
-        // Save Attendance
-        // ===============================
 
         await pool.query(
 
@@ -149,42 +127,31 @@ const checkIn = async (req, res) => {
             )`,
 
             [
-
                 employee_id,
-
                 employee_name,
-
                 latitude,
-
                 longitude,
-
                 accuracy,
-
                 location_type,
-
                 site_name,
-
                 savedImagePath
-
             ]
 
         );
 
-        res.json({
+        return res.json({
 
             success: true,
 
-            message: "Check IN Successful"
+            message: "Check IN Successful ✅"
 
         });
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.error(err);
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -196,12 +163,15 @@ const checkIn = async (req, res) => {
 
 };
 
+// ======================================
+// CHECK OUT
+// ======================================
+
 const checkOut = async (req, res) => {
 
     console.log("===== CHECK OUT API CALLED =====");
 
     const {
-
         employee_id,
         latitude,
         longitude,
@@ -209,7 +179,6 @@ const checkOut = async (req, res) => {
         location_type,
         site_name,
         checkout_selfie_url
-
     } = req.body;
 
     try {
@@ -218,8 +187,8 @@ const checkOut = async (req, res) => {
 
             `SELECT *
              FROM attendance
-             WHERE employee_id=$1
-             AND attendance_date=CURRENT_DATE`,
+             WHERE employee_id = $1
+             AND attendance_date = CURRENT_DATE`,
 
             [employee_id]
 
@@ -268,7 +237,6 @@ const checkOut = async (req, res) => {
             const buffer = Buffer.from(base64Data, "base64");
 
             const fileName =
-
                 `${employee_id}_OUT_${crypto.randomUUID()}.jpg`;
 
             const { error } = await supabase.storage
@@ -298,78 +266,64 @@ const checkOut = async (req, res) => {
         }
 
         // ===============================
-        // Update Attendance
+        // UPDATE ATTENDANCE
         // ===============================
 
         await pool.query(
 
             `UPDATE attendance
-
              SET
-
-             out_time=CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata',
-
-             latitude=$1,
-
-             longitude=$2,
-
-             accuracy=$3,
-
-             location_type=$4,
-
-             site_name=$5,
-
-             checkout_selfie_url=$6
-
-             WHERE employee_id=$7
-
-             AND attendance_date=CURRENT_DATE`,
+                out_time = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata',
+                latitude = $1,
+                longitude = $2,
+                accuracy = $3,
+                location_type = $4,
+                site_name = $5,
+                checkout_selfie_url = $6
+             WHERE employee_id = $7
+             AND attendance_date = CURRENT_DATE`,
 
             [
 
                 latitude,
-
                 longitude,
-
                 accuracy,
-
                 location_type,
-
                 site_name,
-
                 savedImagePath,
-
                 employee_id
 
             ]
 
         );
 
-        res.json({
+        return res.json({
 
             success: true,
 
-            message: "Checked Out Successfully"
+            message: "Checked Out Successfully ✅"
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            error: err.message
 
         });
 
     }
 
-   catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-
-        success: false,
-
-        error: err.message
-
-    });
-
-}
-
 };
+
+// ======================================
+// EXPORT FUNCTIONS
+// ======================================
 
 module.exports = {
 
