@@ -196,23 +196,7 @@ if (location_type === "Office") {
 
             };
 
-            if (location_type === "Office") {
-
-                if (action === "CHECKIN") {
-
-                    await saveAttendance();
-
-                } else {
-
-                    await saveCheckout();
-
-                }
-
-            } else {
-
-                await openCamera();
-
-            }
+            await openCamera();
 
         },
 
