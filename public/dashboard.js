@@ -190,7 +190,9 @@ if (location_type === "Office") {
 
                 site_name,
 
-                selfie_url: null,
+                checkin_selfie_url: null,
+
+                checkout_selfie_url: null,
 
                 action
 
