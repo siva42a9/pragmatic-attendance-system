@@ -449,3 +449,25 @@ checkoutBtn.addEventListener("click", () => {
     performAttendance("CHECKOUT");
 
 });
+
+const bubbleContainer = document.getElementById("backgroundBubbles");
+
+for (let i = 0; i < 60; i++) {
+
+    const bubble = document.createElement("span");
+
+    bubbleContainer.appendChild(bubble);
+
+    bubble.style.left = Math.random() * 100 + "%";
+
+    const size = Math.random() * 45 + 20;
+
+    bubble.style.width = size + "px";
+    bubble.style.height = size + "px";
+
+    bubble.style.animationDuration =
+        (Math.random() * 12 + 8) + "s";
+
+    bubble.style.animationDelay =
+        Math.random() * 12 + "s";
+}
