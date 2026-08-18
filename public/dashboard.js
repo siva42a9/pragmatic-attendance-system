@@ -1,3 +1,10 @@
+const employeeName = localStorage.getItem("employee_name");
+
+if (employeeName) {
+    document.getElementById("welcomeMessage").innerHTML =
+        `<strong>Welcome, <span style="color:red;">${employeeName}</span> 🙏</strong>`;
+}
+
 const checkinBtn = document.getElementById("checkinBtn");
 const checkoutBtn = document.getElementById("checkoutBtn");
 const msg = document.getElementById("msg");

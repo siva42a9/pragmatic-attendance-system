@@ -25,6 +25,7 @@ loginBtn.addEventListener("click", async () => {
 
     // 👇 Employee ID ni browser lo save chestundi
     localStorage.setItem("employee_id", data.user.employee_id);
+    localStorage.setItem("employee_name", data.user.full_name);
 
     alert("✅ Login Success");
 
